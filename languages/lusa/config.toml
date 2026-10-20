@@ -13,9 +13,5 @@ brackets = [
 word_characters = ["%", ".", "-", "_"]
 scope = "source.lusa"
 
-increases_indent_patterns = [
-  "^(.*\\bthen|.*\\bdo|.*\\brepeat|.*\\belse(?!=))\\s*$",
-]
-decreases_indent_patterns = [
-  "^\\s*\\b(elseif|else|end|until)\\b.*$",
-]
+increase_indent_pattern = "^(.*\\bthen|.*\\bdo|.*\\brepeat|.*\\belse(?!=))\\s*$"
+decrease_indent_pattern = "^\\s*\\b(elseif|else|end|until)\\b.*$"

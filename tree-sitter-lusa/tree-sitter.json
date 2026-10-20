@@ -12,7 +12,7 @@
     "license": "MIT",
     "description": "Tree-sitter grammar for Lusa (Lua-like with ownership)",
     "links": {
-      "repository": "https://github.com/syntax-08/lusa-zed"
+      "repository": "https://github.com/syntax-08/zed-lusa"
     }
   }
 }

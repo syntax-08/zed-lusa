@@ -20,9 +20,16 @@ module.exports = grammar({
 
   word: $ => $.identifier,
 
-  extras: $ => [/\s/, $.comment],
+  extras: $ => [/\s/, $.comment, ";"],
 
   supertypes: $ => [$.statement, $._expr],
+
+  conflicts: $ => [
+    [$._prefix, $.call_statement],
+    [$._expr, $._prefix],
+    [$.table_field_list],
+    [$.expr_list],
+  ],
 
   rules: {
     source_file: $ => repeat($._statement),
@@ -94,7 +101,7 @@ module.exports = grammar({
       "(",
       optional($.parameter_list),
       ")",
-      $._block,
+      repeat($._statement),
       "end",
     ),
 
@@ -106,36 +113,36 @@ module.exports = grammar({
       "...",
     ),
 
-    do_statement: $ => seq("do", $._block, "end"),
+    do_statement: $ => seq("do", repeat($._statement), "end"),
 
     while_statement: $ => seq(
-      "while", field("condition", $._expr), "do", $._block, "end",
+      "while", field("condition", $._expr), "do", repeat($._statement), "end",
     ),
 
     repeat_statement: $ => seq(
-      "repeat", $._block, "until", field("condition", $._expr),
+      "repeat", repeat($._statement), "until", field("condition", $._expr),
     ),
 
     if_statement: $ => prec.right(seq(
       "if", field("condition", $._expr), "then",
-      $._block,
+      repeat($._statement),
       repeat($.elseif_clause),
       optional($.else_clause),
       "end",
     )),
 
     elseif_clause: $ => seq(
-      "elseif", field("condition", $._expr), "then", $._block,
+      "elseif", field("condition", $._expr), "then", repeat($._statement),
     ),
 
-    else_clause: $ => seq("else", $._block),
+    else_clause: $ => seq("else", repeat($._statement)),
 
     numeric_for_statement: $ => seq(
       "for", field("variable", $.identifier), "=",
       field("start", $._expr), ",",
       field("stop", $._expr),
       optional(seq(",", field("step", $._expr))),
-      "do", $._block, "end",
+      "do", repeat($._statement), "end",
     ),
 
     generic_for_statement: $ => seq(
@@ -144,15 +151,13 @@ module.exports = grammar({
       repeat(seq(",", field("variable", $.identifier))),
       "in",
       $.expr_list,
-      "do", $._block, "end",
+      "do", repeat($._statement), "end",
     ),
-
-    _block: $ => repeat($._statement),
 
     // ------------------------------------------------------------------ //
     // expressions
 
-    expr_list: $ => seq($._expr, repeat(seq(",", $._expr))),
+    expr_list: $ => seq($._expr, repeat(seq(prec(1, ","), $._expr))),
 
     _expr: $ => choice(
       $.or_expression,
@@ -207,9 +212,9 @@ module.exports = grammar({
 
     vararg_expression: _ => "...",
 
-    parenthesized: _ => seq("(", $._expr, ")"),
+    parenthesized: $ => seq("(", $._expr, ")"),
 
-    prefix_expression: $ => $.identifier,
+    prefix_expression: $ => $._prefix,
 
     call_expression: $ => choice(
       prec.left(PREC.CALL, seq(
@@ -237,7 +242,7 @@ module.exports = grammar({
     ),
 
     args: $ => choice(
-      seq("(", optional(commaSep($._expr)), optional(","), ")"),
+      seq("(", optional(seq($.expr_list, optional(","))), ")"),
       $.table,
       $.string,
     ),
@@ -247,12 +252,15 @@ module.exports = grammar({
     table: $ => seq(
       "{",
       optional(seq(
-        $.table_field,
-        repeat(choice(",", ";")),
-        optional($.table_field),
-        repeat(choice(",", ";")),
+        $.table_field_list,
+        optional(choice(",", ";")),
       )),
       "}",
+    ),
+
+    table_field_list: $ => seq(
+      $.table_field,
+      repeat(seq(choice(prec(1, ","), prec(1, ";")), $.table_field)),
     ),
 
     table_field: $ => choice(
@@ -285,7 +293,7 @@ module.exports = grammar({
       repeat(choice(
         $.escape_sequence,
         $.interpolation,
-        token.immediate(prec(1, /[^"\\\{]+/)),
+        token.immediate(prec(1, /[^"\\]+/)),
       )),
       '"',
     ),
@@ -295,7 +303,7 @@ module.exports = grammar({
       repeat(choice(
         $.escape_sequence,
         $.interpolation,
-        token.immediate(prec(1, /[^'\\\{]+/)),
+        token.immediate(prec(1, /[^'\\]+/)),
       )),
       "'",
     ),

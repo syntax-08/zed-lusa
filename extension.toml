@@ -7,4 +7,5 @@ description = "Syntax highlighting for the Lusa language (Lua-like dynamic langu
 repository = "https://github.com/syntax-08/lusa-zed"
 
 [grammars.lusa]
+repository = "https://github.com/syntax-08/zed-lusa"
 path = "tree-sitter-lusa"

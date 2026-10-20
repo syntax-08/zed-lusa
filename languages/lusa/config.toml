@@ -1,0 +1,21 @@
+name = "Lusa"
+grammar = "lusa"
+path_suffixes = ["lusa"]
+block_comment = ["--[[ ", " ]]"]
+autoclose_before = ";:.,=}])>"
+brackets = [
+  { start = "{", end = "}", close = true, newline = true },
+  { start = "[", end = "]", close = true, newline = true },
+  { start = "(", end = ")", close = true, newline = false },
+  { start = "\"", end = "\"", close = true, newline = false, not_in = ["string", "comment"] },
+  { start = "'", end = "'", close = true, newline = false, not_in = ["string", "comment"] },
+]
+word_characters = ["%", ".", "-", "_"]
+scope = "source.lusa"
+
+increases_indent_patterns = [
+  "^(.*\\bthen|.*\\bdo|.*\\brepeat|.*\\belse(?!=))\\s*$",
+]
+decreases_indent_patterns = [
+  "^\\s*\\b(elseif|else|end|until)\\b.*$",
+]

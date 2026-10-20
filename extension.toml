@@ -1,0 +1,10 @@
+id = "lusa"
+name = "Lusa"
+version = "0.1.0"
+schema_version = "0.1.0"
+authors = ["syntax-08"]
+description = "Syntax highlighting for the Lusa language (Lua-like dynamic language with Rust-style ownership)"
+repository = "https://github.com/syntax-08/lusa-zed"
+
+[grammars.lusa]
+path = "tree-sitter-lusa"

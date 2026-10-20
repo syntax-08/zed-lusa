@@ -1,0 +1,12 @@
+{
+  "name": "tree-sitter-lusa",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for the Lusa language (Lua-like with ownership)",
+  "license": "MIT",
+  "tree-sitter": [
+    {
+      "scope": "source.lusa",
+      "file-types": ["lusa"]
+    }
+  ]
+}

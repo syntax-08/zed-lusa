@@ -1,0 +1,18 @@
+{
+  "grammars": [
+    {
+      "name": "lusa",
+      "scope": "source.lusa",
+      "file-types": ["lusa"],
+      "injection-regex": "^lusa$"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for Lusa (Lua-like with ownership)",
+    "links": {
+      "repository": "https://github.com/syntax-08/lusa-zed"
+    }
+  }
+}

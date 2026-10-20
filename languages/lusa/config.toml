@@ -1,6 +1,7 @@
 name = "Lusa"
 grammar = "lusa"
 path_suffixes = ["lusa"]
+language_servers = ["lusa"]
 block_comment = ["--[[ ", " ]]"]
 autoclose_before = ";:.,=}])>"
 brackets = [

@@ -1,6 +1,10 @@
 /**
- * Tree-sitter grammar for the **Lusa** language.
- * Lua-like with Rust-style ownership (`clone` / `borrow`).
+ * Tree-sitter grammar for **Lusa v1.0.0**.
+ *
+ * Lua-like syntax with Rust-style ownership (`move` / `clone` / `borrow`),
+ * native type annotations, static structs, and `unsafe` blocks. Primitive
+ * type names are grouped under `primitive_type` so highlight queries can
+ * color the complete annotation without relying on anonymous tokens.
  */
 const PREC = {
   OR: 1,
@@ -47,6 +51,8 @@ module.exports = grammar({
       $.numeric_for_statement,
       $.generic_for_statement,
       $.function_declaration,
+      $.struct_declaration,
+      $.unsafe_statement,
       $.return_statement,
       $.break_statement,
     ),
@@ -79,7 +85,8 @@ module.exports = grammar({
       seq(
         "local",
         $.identifier,
-        repeat(seq(",", $.identifier)),
+        optional(seq(":", $.type)),
+        repeat(seq(",", $.identifier, optional(seq(":", $.type)))),
         optional(seq("=", $.expr_list)),
       ),
       seq("local", "function", $.identifier, $.function_body),
@@ -101,6 +108,7 @@ module.exports = grammar({
       "(",
       optional($.parameter_list),
       ")",
+      optional(seq(":", $.type)),
       repeat($._statement),
       "end",
     ),
@@ -108,9 +116,72 @@ module.exports = grammar({
     parameter_list: $ => choice(
       seq(
         $.identifier,
-        repeat(seq(",", choice($.identifier, "..."))),
+        optional(seq(":", $.type)),
+        repeat(seq(",", choice(
+          seq($.identifier, optional(seq(":", $.type))),
+          "...",
+        ))),
       ),
       "...",
+    ),
+
+    struct_declaration: $ => seq(
+      "struct",
+      field("name", $.identifier),
+      "{",
+      repeat($.struct_field),
+      "}",
+    ),
+
+    struct_field: $ => seq(
+      field("name", $.identifier),
+      ":",
+      field("type", $.type),
+      optional(choice(",", ";")),
+    ),
+
+    unsafe_statement: $ => seq(
+      "unsafe",
+      "do",
+      repeat($._statement),
+      "end",
+    ),
+
+    // Native type annotations. Primitive names are grouped so editors can
+    // color the whole annotation without relying on anonymous-token queries.
+    type: $ => choice(
+      $.pointer_type,
+      $.generic_type,
+      $.primitive_type,
+      $.named_type,
+    ),
+
+    primitive_type: _ => choice(
+      "i32",
+      "u32",
+      "i128",
+      "f32",
+      "bool",
+      "string",
+      "table",
+      "void",
+      "nil",
+    ),
+
+    generic_type: $ => seq(
+      field("name", $.identifier),
+      "<",
+      $.type,
+      repeat(seq(",", $.type)),
+      ">",
+    ),
+
+    named_type: $ => $.identifier,
+
+    pointer_type: $ => seq(
+      "*",
+      field("mutability", choice("mut", "const")),
+      field("element", $.identifier),
     ),
 
     do_statement: $ => seq("do", repeat($._statement), "end"),
@@ -204,7 +275,7 @@ module.exports = grammar({
     )),
 
     clone_expression: $ => prec.right(PREC.UNARY, seq(
-      field("operator", choice("clone", "borrow")),
+      field("operator", choice("clone", "borrow", "move")),
       field("argument", $._expr),
     )),
 
@@ -292,7 +363,7 @@ module.exports = grammar({
       '"',
       repeat(choice(
         $.escape_sequence,
-        $.interpolation,
+        $.string_interpolation,
         token.immediate(prec(1, /[^"\\]+/)),
       )),
       '"',
@@ -302,7 +373,7 @@ module.exports = grammar({
       "'",
       repeat(choice(
         $.escape_sequence,
-        $.interpolation,
+        $.string_interpolation,
         token.immediate(prec(1, /[^'\\]+/)),
       )),
       "'",
@@ -313,7 +384,7 @@ module.exports = grammar({
       seq("\\", choice("\\", "n", "t", "r", "0", "a")),
     )),
 
-    interpolation: $ => seq("\\{", optional($._expr), "}"),
+    string_interpolation: $ => seq("\\{", optional($._expr), "}"),
 
     comment: $ => choice(
       token(seq("--", /[^\r\n]*/)),

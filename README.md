@@ -6,11 +6,14 @@ Syntax highlighting for the [Lusa](https://github.com/syntax-08/lusa) language
 
 ## Features
 
-- Full tree-sitter grammar for Lusa (built on the same grammar as the
+- Full tree-sitter grammar for Lusa v1.0.0 (built on the same grammar as the
   interpreter's parser: everything from `for … in pairs(t)` to strings with
   interpolation `"x \{a + b}"`, `--[[ block comments ]]`, and the Lusa-only
-  keywords `clone` and `borrow`)
-- Syntax highlighting tuned for a Lua-like language
+  keywords `move`, `clone`, `borrow`, `unsafe`, and `struct`)
+- Native type annotations (`i32`, `u32`, `i128`, `f32`, `bool`, `string`,
+  generic table types, and `*mut` / `*const` raw pointers) are parsed and
+  highlighted
+- Syntax highlighting tuned for a Lua-like language with systems-level types
 - Bracket auto-close for `{}` `[]` `()` quotes
 - Block comment support (`--[[ ]]`)
 - **Live diagnostics from a real language server** (`lusalang lsp`): lex and

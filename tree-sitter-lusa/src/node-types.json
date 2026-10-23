@@ -130,6 +130,14 @@
         "named": true
       },
       {
+        "type": "struct_declaration",
+        "named": true
+      },
+      {
+        "type": "unsafe_statement",
+        "named": true
+      },
+      {
         "type": "while_statement",
         "named": true
       }
@@ -315,6 +323,10 @@
           {
             "type": "clone",
             "named": false
+          },
+          {
+            "type": "move",
+            "named": false
           }
         ]
       }
@@ -384,7 +396,7 @@
           "named": true
         },
         {
-          "type": "interpolation",
+          "type": "string_interpolation",
           "named": true
         }
       ]
@@ -460,6 +472,10 @@
         },
         {
           "type": "statement",
+          "named": true
+        },
+        {
+          "type": "type",
           "named": true
         }
       ]
@@ -573,6 +589,32 @@
     }
   },
   {
+    "type": "generic_type",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "if_statement",
     "named": true,
     "fields": {
@@ -655,21 +697,6 @@
     }
   },
   {
-    "type": "interpolation",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "_expr",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "local_declaration",
     "named": true,
     "fields": {},
@@ -688,9 +715,33 @@
         {
           "type": "identifier",
           "named": true
+        },
+        {
+          "type": "type",
+          "named": true
         }
       ]
     }
+  },
+  {
+    "type": "named_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "nil",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "numeric_for_statement",
@@ -774,6 +825,10 @@
         {
           "type": "identifier",
           "named": true
+        },
+        {
+          "type": "type",
+          "named": true
         }
       ]
     }
@@ -791,6 +846,36 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "pointer_type",
+    "named": true,
+    "fields": {
+      "element": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "mutability": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "const",
+            "named": false
+          },
+          {
+            "type": "mut",
+            "named": false
+          }
+        ]
+      }
     }
   },
   {
@@ -834,6 +919,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "primitive_type",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "repeat_statement",
@@ -889,7 +979,7 @@
           "named": true
         },
         {
-          "type": "interpolation",
+          "type": "string_interpolation",
           "named": true
         }
       ]
@@ -928,6 +1018,73 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "string_interpolation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "_expr",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "struct_declaration",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "struct_field",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "struct_field",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -997,6 +1154,33 @@
     }
   },
   {
+    "type": "type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "generic_type",
+          "named": true
+        },
+        {
+          "type": "named_type",
+          "named": true
+        },
+        {
+          "type": "pointer_type",
+          "named": true
+        },
+        {
+          "type": "primitive_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "unary_expression",
     "named": true,
     "fields": {
@@ -1028,6 +1212,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "unsafe_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "statement",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1205,6 +1404,10 @@
     "named": false
   },
   {
+    "type": "bool",
+    "named": false
+  },
+  {
     "type": "borrow",
     "named": false
   },
@@ -1214,6 +1417,10 @@
   },
   {
     "type": "clone",
+    "named": false
+  },
+  {
+    "type": "const",
     "named": false
   },
   {
@@ -1237,6 +1444,10 @@
     "named": true
   },
   {
+    "type": "f32",
+    "named": false
+  },
+  {
     "type": "false",
     "named": false
   },
@@ -1246,6 +1457,14 @@
   },
   {
     "type": "function",
+    "named": false
+  },
+  {
+    "type": "i128",
+    "named": false
+  },
+  {
+    "type": "i32",
     "named": false
   },
   {
@@ -1265,8 +1484,16 @@
     "named": false
   },
   {
+    "type": "move",
+    "named": false
+  },
+  {
+    "type": "mut",
+    "named": false
+  },
+  {
     "type": "nil",
-    "named": true
+    "named": false
   },
   {
     "type": "not",
@@ -1289,6 +1516,18 @@
     "named": false
   },
   {
+    "type": "string",
+    "named": false
+  },
+  {
+    "type": "struct",
+    "named": false
+  },
+  {
+    "type": "table",
+    "named": false
+  },
+  {
     "type": "then",
     "named": false
   },
@@ -1297,7 +1536,19 @@
     "named": false
   },
   {
+    "type": "u32",
+    "named": false
+  },
+  {
+    "type": "unsafe",
+    "named": false
+  },
+  {
     "type": "until",
+    "named": false
+  },
+  {
+    "type": "void",
     "named": false
   },
   {

@@ -8,7 +8,7 @@ repository = "https://github.com/syntax-08/zed-lusa"
 
 [grammars.lusa]
 repository = "https://github.com/syntax-08/zed-lusa"
-rev = "b6bb56de63019a6d1868797933c2f42056caf8fb"
+rev = "7f3b3ab5d0ae7fed8a0de6af79937f74751d87be"
 path = "tree-sitter-lusa"
 
 [language_servers.lusa]
